@@ -2,34 +2,53 @@
 
 # PropuestaPsicoElia - Plataforma Digital Integral
 
+**Este es un paquete básico estándar para el desarrollo de una landing page profesional con funcionalidades de agendamiento y pagos. El objetivo es crear una presencia digital completa que permita a PsicoElia gestionar sus citas de manera automatizada, recibir pagos online y mantener control total sobre su negocio a través de un panel administrativo intuitivo.**
+
+## Índice
+
+1. [Resumen Ejecutivo](#1-resumen-ejecutivo)
+2. [Componentes del Sistema](#2-componentes-del-sistema)
+3. [Tecnologías Propuestas](#3-tecnologías-propuestas)
+4. [Opciones de Pago Integradas](#4-opciones-de-pago-integradas)
+5. [Arquitectura del Sistema](#5-arquitectura-del-sistema)
+6. [Flujo de Agendamiento](#6-flujo-de-agendamiento)
+7. [Tiempo de Desarrollo](#7-tiempo-de-desarrollo)
+8. [Contenido y SEO](#8-contenido-y-seo)
+9. [Testing y Calidad del Código](#9-testing-y-calidad-del-código)
+10. [Soporte Post-Lanzamiento](#10-soporte-post-lanzamiento)
+11. [Seguridad y Escalabilidad](#11-seguridad-y-escalabilidad)
+12. [Presupuesto](#12-presupuesto)
+13. [Requerimientos del Cliente](#13-requerimientos-del-cliente)
+14. [Contacto](#14-contacto)
+
 ## 1. Resumen Ejecutivo
 
 Desarrollo de una plataforma web integral para PsicoElia que incluye:
 
-- Página de aterrizaje profesional
+- Landing page profesional
 - Sistema de pagos integrado
 - Agendamiento de citas en línea
 - Panel administrativo completo
 
 ## 2. Componentes del Sistema
 
-### 2.1 Página de Aterrizaje
+### 2.1 Landing Page
 
-- **Diseño Profesional**: Diseño moderno y adaptable a dispositivos
+- **Diseño Profesional**: Diseño moderno y adaptable a dispositivos (responsivo).
 - **Información de Servicios**: Presentación clara de servicios psicológicos
+- **Páginas Adicionales**: Hasta 5 pantallas extra para información complementaria: Ejmp: "sobre nosotros, biografia completa, tips, etc..."
+- **Contenido Expandible**: Secciones adicionales para tópicos importantes según necesidades
 - **SEO**: Optimización para motores de búsqueda
 
 ### 2.2 Sistema de Pagos
 
 - **Pasarelas**: Integración con Stripe y MercadoPago
 - **Recurrencia**: Suscripciones y pagos únicos
-- **Facturación**: Generación automática de recibos
 
 ### 2.3 Sistema de Agendamiento
 
 - **Base de Datos Propia**: Gestión completa desde Supabase
 - **Disponibilidad**: Configuración de días y horarios desde panel administrativo
-- **Confirmaciones**: Correos automáticos y recordatorios
 
 ### 2.4 Panel Administrativo
 
@@ -37,7 +56,7 @@ Desarrollo de una plataforma web integral para PsicoElia que incluye:
 - **Gestión de Citas**: Visualización y administración completa
 - **Control de Disponibilidad**: Configuración de días y horarios disponibles
 - **Pagos**: Visualización de pagos recibidos y confirmados
-- **Reportes**: Montos semanales y mensuales
+- **Reportes**: Montos semanales y mensuales (solo visibles en el administrador, incluye filtrado por fechas)
 - **Promociones**: Editor de texto para descuentos y ofertas
 - **Usuarios**: Gestión de pacientes
 - **Extensibilidad**: Funcionalidad ampliable según necesidades futuras
@@ -47,6 +66,8 @@ Desarrollo de una plataforma web integral para PsicoElia que incluye:
 - **Frontend**: Next.js 14 con TypeScript
 - **Base de Datos**: Supabase
 - **ORM**: Supabase SDK nativo (no requiere Prisma)
+- **Videollamadas**: Google Meet API
+- **Email Service**: Gmail API / Google Workspace
 - **Testing**: Jest + React Testing Library + Playwright
 - **Alojamiento**: Netlify (gratuito)
 - **Control de Versiones**: GitHub
@@ -54,9 +75,15 @@ Desarrollo de una plataforma web integral para PsicoElia que incluye:
 - **Autenticación**: JWT
 - **Seguridad**: Server Actions de Next.js
 
-### Nota sobre ORM:
+### Notas Técnicas:
 
-Supabase incluye su propio SDK con TypeScript que facilita las consultas a la base de datos sin necesidad de Prisma, reduciendo la complejidad del proyecto y manteniendo la simplicidad del stack.
+**ORM**: Supabase incluye su propio SDK con TypeScript que facilita las consultas a la base de datos sin necesidad de Prisma, reduciendo la complejidad del proyecto y manteniendo la simplicidad del stack.
+
+**Google Services**:
+
+- **Meet API**: Para crear espacios de reunión únicos automáticamente
+- **Gmail API**: Para envío confiable de confirmaciones de cita y recordatorios
+- **Google Workspace**: Recomendado para funcionalidad completa (opcional)
 
 ## 4. Opciones de Pago Integradas
 
@@ -79,8 +106,8 @@ Supabase incluye su propio SDK con TypeScript que facilita las consultas a la ba
 #### **Otras Opciones**:
 
 - **PayU Latam**: Mínimo $9,900 COP + IVA por transacción
-- **Stripe**: Solución internacional
-- **PayPal**: Integración adicional disponible
+- **Stripe**: Solución internacional - recomendada.
+- **PayPal**: Integración adicional disponible - comisiones pueden afectar ganancias y requerir nueva estrategia de precios.
 - **Nequi**: Solo reportes (requiere verificación con representantes)
 
 ### Consideraciones:
@@ -88,6 +115,9 @@ Supabase incluye su propio SDK con TypeScript que facilita las consultas a la ba
 - Wise: No disponible para pagos con tarjeta
 - CMS: Incrementaría costos y tiempo de desarrollo
 - WordPress + WooCommerce: No recomendado por dependencia de plataforma
+
+#### **Gestión de Cancelaciones:**
+Para que los pacientes puedan cancelar sus citas ya programadas en la app, deben contar con un usuario y contraseña. De otra forma debe haber un canal de comunicación claro y se debe gestionar de forma manual por parte del personal de PsicoElia.
 
 ## 5. Arquitectura del Sistema
 
@@ -104,6 +134,8 @@ graph TB
         H[Next.js + TypeScript]
         I[Supabase]
         J[Netlify]
+        K[Google Meet API]
+        L[Gmail API]
     end
 ```
 
@@ -117,14 +149,16 @@ sequenceDiagram
     participant PG as Payment Gateway
     participant A as Admin Panel
 
+    U->>W: Selecciona tipo de servicio
     U->>W: Selecciona fecha/hora
     W->>DB: Verifica disponibilidad
     DB->>W: Confirma disponibilidad
     W->>U: Muestra formulario de pago
     U->>PG: Procesa pago
     PG->>W: Confirma pago
-    W->>DB: Guarda cita y pago
-    W->>U: Confirmación por email
+    W->>W: Crea enlace Google Meet
+    W->>DB: Guarda cita, pago y enlace
+    W->>U: Confirmación por email con enlace Meet
     A->>DB: Ve citas y pagos en panel
 ```
 
@@ -140,8 +174,8 @@ sequenceDiagram
 
 ## 8. Contenido y SEO
 
-- **Páginas Principales**: Landing con secciones solicitadas
-- **Páginas Adicionales**: Información complementaria estática
+- **Landing Page Principal**: Con secciones solicitadas
+- **5 Páginas Adicionales**: Para información complementaria detallada
 - **Editor de Promociones**: Desde panel administrativo
 - **Optimización SEO**: SSR y SSG (recomendado para motores de búsqueda)
 
@@ -209,7 +243,7 @@ graph LR
 - **Post 30 días**: Tarifa por hora para modificaciones
 - **Monitoreo incluido**: Error tracking y performance monitoring
 
-## 10. Seguridad y Escalabilidad
+## 11. Seguridad y Escalabilidad
 
 ### Opción Estándar:
 
@@ -220,9 +254,10 @@ graph LR
 ### Opción Avanzada (si se requiere):
 
 - Servidor Express.js o Ruby on Rails
-- **Costo adicional**: $18-$24 USD mensuales para hosting especializado
+- **Costo adicional de desarrollo**: $80-120 USD adicionales al presupuesto
+- **Costo mensual de hosting**: $18-$24 USD mensuales para hosting especializado
 
-## 11. Presupuesto
+## 12. Presupuesto
 
 **Total: $260 USD**
 
@@ -238,7 +273,7 @@ graph LR
 - **70% al inicio**: $182 USD (incluye dominio)
 - **30% al finalizar**: $78 USD
 
-## 12. Requerimientos del Cliente
+## 13. Requerimientos del Cliente
 
 ### Accesos Necesarios:
 
@@ -312,7 +347,6 @@ graph LR
   - Uso de la plataforma de agendamiento
   - Responsabilidades del usuario y la plataforma
   - Limitaciones de responsabilidad técnica
-  - Política de cookies y seguimiento
   - Derechos de propiedad intelectual
   - Modificaciones a los términos
   - Ley aplicable y jurisdicción
@@ -321,10 +355,7 @@ graph LR
   - Qué datos se recolectan (navegación, cookies, formularios)
   - Cómo se utilizan los datos técnicos
   - Compartir información con terceros (pasarelas de pago)
-  - Derechos del usuario (acceso, rectificación, eliminación)
-  - Seguridad de los datos técnicos
   - Transferencias internacionales de datos
-  - Contacto para temas de privacidad
 
 **Documentos Legales del Servicio Psicológico:**
 
@@ -351,13 +382,8 @@ graph LR
 - [ ] **Consentimiento Informado Digital**: Formato válido legalmente
 - [ ] **Autorización para Teleconsulta**: Específico para terapia online
 - [ ] **Consentimiento para Menores**: Autorización parental requerida
-- [ ] **Autorización de Grabación** (si aplica): Para fines terapéuticos
 
-**Integración con Herramientas Externas:**
-
-- [ ] **Google Meet**: Configuración para generar enlaces automáticos de videollamada
-- [ ] **Calendly**: Opción alternativa para sistema de agendamiento
-- [ ] **Sincronización de calendarios**: Google Calendar integrado con las citas
+Nota: Verificar si es realmente requerido.
 
 **Políticas Operativas Simplificadas:**
 
@@ -374,13 +400,15 @@ graph LR
 - [ ] **Historial psicológico previo**: Terapias anteriores
 - [ ] **Información de emergencia**: Contacto de familiar
 - [ ] **Preferencias de comunicación**: Email, WhatsApp, llamada
-- [ ] **Disponibilidad horaria**: Horarios preferidos del paciente
+- [ ] **Disponibilidad horaria**: Horarios preferidos del paciente.
+
+Nota: verificar si es necesario.
 
 #### **G. Comunicación y Seguimiento**
 
-- [ ] **Canal principal de comunicación**: WhatsApp, Email, Sistema interno
-- [ ] **Protocolo de comunicación entre sesiones**: Límites y disponibilidad
-- [ ] **Formato de confirmación de citas**: Automático por email/SMS
+- [ ] **Canal principal de comunicación**: WhatsApp, Email...
+- [ ] **Protocolo de comunicación entre sesiones**: Límites y disponibilidad....
+- [ ] **Formato de confirmación de citas**: Automático por email con google.
 - [ ] **Proceso de reagendamiento**: Pasos y plataformas
 - [ ] **Manejo de cancelaciones**: Notificación y procedimiento
 
@@ -408,7 +436,7 @@ graph LR
 
 - [ ] **Google Calendar**: Integración bidireccional
 - [ ] **Notificaciones**: Recordatorios automáticos
-- [ ] **Bloqueo de horarios**: Prevenir doble agendamiento
+- [ ] **Bloqueo de horarios**: Prevenir doble agendamiento.
 
 **Testing y Calidad:**
 
@@ -419,7 +447,6 @@ graph LR
   - End-to-End Tests: Experiencia completa del usuario
   - API Tests: Endpoints de Supabase y servicios externos
 - [ ] **Cobertura mínima**: 80% del código
-- [ ] **CI/CD Pipeline**: Tests automáticos en GitHub Actions
 
 **Aspectos Técnicos Generales:**
 
@@ -435,10 +462,8 @@ graph LR
 
 - ✅ Términos y condiciones web (uso de plataforma)
 - ✅ Política de privacidad web (datos de navegación y pagos)
-- ✅ Cumplimiento básico con protección de datos Colombia
-- ✅ Consentimientos para servicios digitales
 
-## 13. Contacto
+## 14. Contacto
 
 **Miguel Figuera**
 
