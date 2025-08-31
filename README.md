@@ -82,10 +82,12 @@ Desarrollo de una plataforma web integral para PsicoElia que incluye:
 **Google Services**:
 
 - **Meet API**: Para crear espacios de reunión únicos automáticamente
-- **Gmail API**: Para envío confiable de confirmaciones de cita y recordatorios
+- **Gmail API**: Para envío de correos de confirmacion para la reunion en meet.
 - **Google Workspace**: Recomendado para funcionalidad completa (opcional)
 
-## 4. Opciones de Pago Integradas
+## 4. Opciones De plataformas de Pago:
+
+Debemos escoger una en especifico, aqui la lista de opciones:
 
 ### Plataformas Recomendadas:
 
@@ -117,6 +119,7 @@ Desarrollo de una plataforma web integral para PsicoElia que incluye:
 - WordPress + WooCommerce: No recomendado por dependencia de plataforma
 
 #### **Gestión de Cancelaciones:**
+
 Para que los pacientes puedan cancelar sus citas ya programadas en la app, deben contar con un usuario y contraseña. De otra forma debe haber un canal de comunicación claro y se debe gestionar de forma manual por parte del personal de PsicoElia.
 
 ## 5. Arquitectura del Sistema
@@ -324,7 +327,6 @@ graph LR
 - [ ] **Política de reprogramación**: Condiciones y límites
 - [ ] **No-show policy**: Qué sucede si no se presenta
 - [ ] **Tiempo entre citas**: Margen para preparación
-- [ ] **Recordatorios**: 24h antes / 2h antes / ambos
 - [ ] **Máximo de citas por día**: Límite de capacidad
 
 #### **D. Información Profesional**
@@ -435,7 +437,6 @@ Nota: verificar si es necesario.
 **Sincronización de Calendarios:**
 
 - [ ] **Google Calendar**: Integración bidireccional
-- [ ] **Notificaciones**: Recordatorios automáticos
 - [ ] **Bloqueo de horarios**: Prevenir doble agendamiento.
 
 **Testing y Calidad:**
